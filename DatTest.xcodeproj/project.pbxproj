@@ -15,6 +15,7 @@
 		8DBD1DC71A631136005A495C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8DBD1DC61A631136005A495C /* Images.xcassets */; };
 		8DBD1DCA1A631136005A495C /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8DBD1DC81A631136005A495C /* LaunchScreen.xib */; };
 		8DBD1DD61A631136005A495C /* DatTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DBD1DD51A631136005A495C /* DatTestTests.m */; };
+		8DBD1DE31A631A01005A495C /* input.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8DBD1DE21A631A01005A495C /* input.dat */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +43,7 @@
 		8DBD1DCF1A631136005A495C /* DatTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DatTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8DBD1DD41A631136005A495C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DBD1DD51A631136005A495C /* DatTestTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DatTestTests.m; sourceTree = "<group>"; };
+		8DBD1DE21A631A01005A495C /* input.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = input.dat; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 		8DBD1DB61A631136005A495C /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8DBD1DE21A631A01005A495C /* input.dat */,
 				8DBD1DB71A631136005A495C /* Info.plist */,
 				8DBD1DB81A631136005A495C /* main.m */,
 			);
@@ -202,6 +205,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8DBD1DE31A631A01005A495C /* input.dat in Resources */,
 				8DBD1DC51A631136005A495C /* Main.storyboard in Resources */,
 				8DBD1DCA1A631136005A495C /* LaunchScreen.xib in Resources */,
 				8DBD1DC71A631136005A495C /* Images.xcassets in Resources */,
@@ -416,6 +420,7 @@
 				8DBD1DDB1A631136005A495C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8DBD1DDC1A631136005A495C /* Build configuration list for PBXNativeTarget "DatTestTests" */ = {
 			isa = XCConfigurationList;
@@ -424,6 +429,7 @@
 				8DBD1DDE1A631136005A495C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
