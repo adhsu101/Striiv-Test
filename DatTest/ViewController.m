@@ -28,6 +28,7 @@
 
     [self loadInput];
     [self generateDataArray];
+    [self generateCSV];
 
 }
 
@@ -46,10 +47,6 @@
     const uint8_t *bytes = [inputData bytes];
 
     NSInteger length = [inputData length];
-//
-//    Byte *byteData = (Byte *)malloc(length);
-//
-//    memcpy(byteData, bytes, length);
 
     self.binaryString = [NSMutableString string];
 
@@ -62,6 +59,7 @@
 
 - (void)getBitStringForInt:(int)value
 {
+
     NSString *bits = @"";
     for(int i = 0; i < 8; i ++)
     {
@@ -70,7 +68,6 @@
 
     [self.binaryString appendString:bits];
 
-//    NSLog(@"%@", bits);
 }
 
 - (void)generateDataArray
@@ -78,16 +75,16 @@
 
     self.arrayOfBinaryStrings = [NSMutableArray array];
 
-    NSUInteger totalBits = [self.binaryString length];
-    NSUInteger totalBytes = totalBits / 8;
-    NSUInteger totalSets = totalBytes / kBytesPerSequence;
-    NSUInteger bitsPerSequence = totalBits / totalSets;
+    NSInteger totalBits = [self.binaryString length];
+    NSInteger totalBytes = totalBits / 8;
+    NSInteger totalSets = totalBytes / kBytesPerSequence;
+    NSInteger bitsPerSequence = totalBits / totalSets;
 
     for (int x = 0; x < totalSets; x++)
     {
-        NSUInteger bitIndex = x * bitsPerSequence;
-        NSUInteger sequenceNumberLoc = bitIndex + kNumberOfBitsToSkip;
-        NSUInteger valueBitLoc = sequenceNumberLoc + kSequenceNumberBits;
+        NSInteger bitIndex = x * bitsPerSequence;
+        NSInteger sequenceNumberLoc = bitIndex + kNumberOfBitsToSkip;
+        NSInteger valueBitLoc = sequenceNumberLoc + kSequenceNumberBits;
 
         // range of sequence number
         NSRange sequenceNumberBitRange = NSMakeRange(sequenceNumberLoc, kSequenceNumberBits);
@@ -109,19 +106,119 @@
 
 }
 
--(void)convertBinaryString:(NSString *)string
+-(void)generateCSV
 {
 
-    // check for negative number
-    
+    NSString *path = [self getCSVFilePath];
+    [[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil];
 
-}
+    NSMutableString *writeString = [NSMutableString string];
 
-+ (NSNumber *)convertBinaryStringToDecimalNumber:(NSString *)binaryString {
-    NSUInteger totalValue = 0;
-    for (int i = 0; i < binaryString.length; i++) {
-        totalValue += (int)([binaryString characterAtIndex:(binaryString.length - 1 - i)] - 48) * pow(2, i);
+    // header row
+    [writeString appendString:@"x, y, z\n"];
+
+    // convert binary data into decimal values with formatting
+    int x = 0;
+    int rowCount = 0;
+    int sequenceNumber = [[self convertBinaryStringToDecimalString:self.arrayOfBinaryStrings.firstObject] intValue];
+
+    for (NSString *binaryString in self.arrayOfBinaryStrings)
+    {
+        NSString *decimalString = [self convertBinaryStringToDecimalString:binaryString];
+
+        if (binaryString.length == 16)
+        {
+            // sanity check
+            if ([decimalString intValue] != sequenceNumber)
+            {
+                NSLog(@"Data integrity check failed");
+                return;
+            }
+            sequenceNumber ++;
+
+        }
+        else
+        {
+            [writeString appendString:decimalString];
+            x ++;
+        }
+
+        if (x == 3)
+        {
+            [writeString appendString:@"\n"];
+            x = 0;
+            rowCount ++;
+        }
+        else if (x != 0)
+        {
+            [writeString appendString:@", "];
+        }
+
     }
-    return @(totalValue);
+
+    NSLog(@"%i rows found. Data integrity check passed.", rowCount);
+
+    NSFileHandle *handle = [NSFileHandle fileHandleForWritingAtPath: [self getCSVFilePath]];
+    [handle truncateFileAtOffset:[handle seekToEndOfFile]];
+    [handle writeData:[writeString dataUsingEncoding:NSUTF8StringEncoding]];
+
+    NSLog(@"Filepath: %@", [self getCSVFilePath]);
+
 }
+
+-(NSString *)getCSVFilePath
+{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    return [documentsDirectory stringByAppendingPathComponent:@"input.csv"];
+}
+
+- (NSString *)convertBinaryStringToDecimalString:(NSString *)binaryString
+{
+    BOOL isNeg = 0;
+
+    // check for negative number
+    if ([binaryString hasPrefix:@"1"])
+    {
+        isNeg = 1;
+
+        // get bitwise complement
+        NSMutableString *binaryStringComplement = [NSMutableString string];
+        for (int i = 0; i < binaryString.length; i++)
+        {
+            if ([[binaryString substringWithRange:NSMakeRange(i, 1)] isEqualToString:@"1"])
+            {
+                [binaryStringComplement appendString:@"0"];
+            }
+            else
+            {
+                [binaryStringComplement appendString:@"1"];
+            }
+
+        }
+
+        binaryString = binaryStringComplement;
+    }
+
+    int totalValue = 0;
+    for (int i = 0; i < binaryString.length; i++)
+    {
+
+        totalValue = totalValue + [[binaryString substringWithRange:NSMakeRange(binaryString.length - 1 - i, 1)] intValue] * pow(2, i);
+
+    }
+
+    if (isNeg)
+    {
+        totalValue = -(totalValue + isNeg);
+    }
+
+    return [NSString stringWithFormat:@"%i", totalValue];
+
+}
+
 @end
+
+
+
+
